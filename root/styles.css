@@ -13,3 +13,11 @@
   background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
   pointer-events: none;
 }
+
+#productGrid img {
+    height: 250px;
+    object-fit: contain;
+    width: 100%;
+    padding: 10px;
+}
+
