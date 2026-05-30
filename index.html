@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="es" ng-app="fakeStoreApp">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>FakeStore</title>
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- AngularJS 1.x -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  </head>
+  <body ng-controller="MainCtrl as vm">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand font-weight-bold" href="#">FakeStore</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="#navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+        </ul>
+        <button class="btn btn-outline-primary my-2 my-sm-0" ng-click="vm.openCart()">
+          <span aria-hidden="true">🛒</span>
+          <span class="ml-2">Monto Total: {{ vm.cartTotal() | currency }}</span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+
+      <!-- Carousel -->
+      <div id="productCarousel" class="carousel slide mb-4" data-ride="carousel">
+        <ol class="carousel-indicators">
+          <li data-target="#productCarousel" data-slide-to="0" class="active"></li>
+          <li data-target="#productCarousel" data-slide-to="1"></li>
+          <li data-target="#productCarousel" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="https://picsum.photos/seed/p1/1200/400" class="d-block w-100" alt="Producto 1">
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Nuevo en FakeStore</h5>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="https://picsum.photos/seed/p2/1200/400" class="d-block w-100" alt="Producto 2">
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Ofertas destacadas</h5>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="https://picsum.photos/seed/p3/1200/400" class="d-block w-100" alt="Producto 3">
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Lo más vendido</h5>
+            </div>
+          </div>
+        </div>
+        <a class="carousel-control-prev" href="#productCarousel" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Anterior</span>
+        </a>
+        <a class="carousel-control-next" href="#productCarousel" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Siguiente</span>
+        </a>
+      </div>
+
+      <!-- Controls: Category + Search -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="form-row align-items-center">
+            <div class="col-auto">
+              <label for="categorySelect" class="sr-only">Categoría</label>
+              <select id="categorySelect" class="form-control" ng-model="vm.selectedCategory" ng-options="c for c in vm.categories">
+                <option value="">Todas</option>
+              </select>
+            </div>
+            <div class="col">
+              <label for="searchInput" class="sr-only">Buscar</label>
+              <input id="searchInput" type="text" class="form-control" placeholder="Buscar producto por nombre" ng-model="vm.searchQuery">
+            </div>
+            <div class="col-auto">
+              <button class="btn btn-secondary" ng-click="vm.clearFilters()">Limpiar</button>
+            </div>
+          </div>
+          <div class="mt-3">
+            <h5>Productos de la categoría: <span class="font-weight-bold">{{ vm.selectedCategory || 'Todas' }}</span></h5>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Grid -->
+      <div class="row" id="productGrid">
+        <div class="col-12 col-sm-6 col-md-4 mb-4" ng-repeat="product in vm.products | filter:vm.byCategory | filter:vm.byName">
+          <div class="card h-100">
+            <img ng-src="{{product.image}}" class="card-img-top" alt="{{product.title}}">
+            <div class="card-body d-flex flex-column">
+              <h6 class="card-title">{{ product.title }}</h6>
+              <p class="card-text text-primary font-weight-bold">{{ product.price | currency }}</p>
+              <div class="mt-auto">
+                <button class="btn btn-outline-info btn-block" ng-click="vm.showProductDetails(product)">Detalles</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Product Details Modal (hidden container prepared) -->
+    <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" ng-if="vm.selectedProduct">
+          <div class="modal-header">
+            <h5 class="modal-title" id="productModalLabel">{{ vm.selectedProduct.title }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <img ng-src="{{vm.selectedProduct.image}}" class="img-fluid" alt="{{vm.selectedProduct.title}}">
+              </div>
+              <div class="col-md-6">
+                <h4 class="text-primary">{{ vm.selectedProduct.price | currency }}</h4>
+                <p>{{ vm.selectedProduct.description }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-success" ng-click="vm.addToCart(vm.selectedProduct)">Agregar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Details Modal (hidden container prepared) -->
+    <div class="modal fade" id="cartModal" tabindex="-1" role="dialog" aria-labelledby="cartModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cartModalLabel">Detalles del Carrito</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div ng-if="vm.cart.length === 0">El carrito está vacío.</div>
+            <ul class="list-group" ng-if="vm.cart.length > 0">
+              <li class="list-group-item d-flex justify-content-between align-items-center" ng-repeat="item in vm.cart">
+                <div>
+                  <strong>{{item.title}}</strong>
+                  <div class="small text-muted">Cantidad: {{item.qty}}</div>
+                </div>
+                <div>{{ (item.price * item.qty) | currency }}</div>
+              </li>
+            </ul>
+            <div class="mt-3 text-right font-weight-bold">Total: {{ vm.cartTotal() | currency }}</div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary" ng-click="vm.checkout()">Pagar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery, Popper.js, Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <!-- App Script -->
+    <script src="app.js"></script>
+  </body>
+</html>
